@@ -1,0 +1,27 @@
+name: Java compile check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Compile application
+        run: |
+          mkdir -p out
+          javac -encoding UTF-8 -d out src/RestaurantManagementSystem.java
+      - name: Smoke test application startup and exit
+        run: |
+          printf '0\n' | java -cp out RestaurantManagementSystem
