@@ -21,6 +21,7 @@ Run the application with the compile/run commands in README.md. Automated domain
 | T15 | Create a valid order and select a payment method | Unique order number and date/time appear; order is added to session history |
 | T16 | View order history after completing an order | Order number, date/time, customer, total, and payment method are listed |
 | T17 | View order history before completing any order | Informational message appears; application remains usable |
+| T18 | Change a menu item's name or price after adding it to an order | Existing order line and bill keep the original item name, unit price, and total |
 
 ## Billing examples
 - ₹400 subtotal: discount ₹0.00; tax 5% of ₹400 = ₹20.00; total ₹420.00.
