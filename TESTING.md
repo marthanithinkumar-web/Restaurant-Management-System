@@ -18,10 +18,13 @@ Run the application with the compile/run commands in README.md. Record actual ob
 | T12 | Select cash, UPI, or card | Corresponding simulated payment message appears |
 | T13 | Finish an order without adding items | Order is cancelled; no bill generated |
 | T14 | Remove an unknown item ID | “Item not found” message appears |
+| T15 | Create a valid order and select a payment method | Unique order number and date/time appear; order is added to session history |
+| T16 | View order history after completing an order | Order number, date/time, customer, total, and payment method are listed |
+| T17 | View order history before completing any order | Informational message appears; application remains usable |
 
 ## Billing examples
 - ₹400 subtotal: discount ₹0.00; tax 5% of ₹400 = ₹20.00; total ₹420.00.
 - ₹500 subtotal: discount 10% = ₹50.00; tax 5% of ₹450 = ₹22.50; total ₹472.50.
 - ₹600 subtotal: discount 10% = ₹60.00; tax 5% of ₹540 = ₹27.00; total ₹567.00.
 
-These are expected values from the stated formula, not claims that automated tests have been run.
+These are expected values from the stated formula, not claims that automated tests have been run. Order history is session-only and is cleared when the program exits.
