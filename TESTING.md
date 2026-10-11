@@ -1,6 +1,6 @@
 # Testing Plan
 
-Run the application with the compile/run commands in README.md. Record actual observed results before using this as a submitted lab report.
+Run the application with the compile/run commands in README.md. Automated domain regression tests are in `tests/RestaurantManagementSystemTest.java`; GitHub Actions compiles the application and tests, executes the regression suite, and performs a startup/exit smoke test. The current automated checks passed in [GitHub Actions](https://github.com/marthanithinkumar-web/Restaurant-Management-System/actions). Manual console scenarios below remain a separate acceptance checklist. Record actual observed results before using this as a submitted lab report.
 
 | Test | Input/action | Expected behaviour |
 |---|---|---|
@@ -27,4 +27,4 @@ Run the application with the compile/run commands in README.md. Record actual ob
 - ₹500 subtotal: discount 10% = ₹50.00; tax 5% of ₹450 = ₹22.50; total ₹472.50.
 - ₹600 subtotal: discount 10% = ₹60.00; tax 5% of ₹540 = ₹27.00; total ₹567.00.
 
-These are expected values from the stated formula, not claims that automated tests have been run. Order history is session-only and is cleared when the program exits.
+The automated regression suite checks the three billing totals and key domain validation behaviours. The manual console scenarios above are not all automated. Order history is session-only and is cleared when the program exits.
