@@ -25,7 +25,8 @@ java -cp out RestaurantManagementSystem
 - Display, add, update, and remove menu items
 - Vegetarian and non-vegetarian item subclasses
 - Customer orders with multiple items and quantities
-- Itemized bill
+- Itemized bill with unique order number and date/time
+- Completed order history for the current application session
 - 10% discount when subtotal is at least ₹500
 - 5% tax calculated after discount
 - Currency calculations use `BigDecimal`
@@ -62,4 +63,4 @@ Restaurant-Management-System/
 ```
 
 ## Important
-Payment choices are simulated; this program does not transfer money. Data is held in memory and is not saved after exit.
+Payment choices are simulated; this program does not transfer money. Menu changes and order history are held in memory and are not saved after exit. Order numbers start at 1001 each time the application starts.
