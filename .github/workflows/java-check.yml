@@ -26,3 +26,13 @@ jobs:
       - name: Smoke test application startup and exit
         run: |
           printf '0\n' | java -cp out RestaurantManagementSystem
+      - name: Smoke test order, billing, payment, and history
+        run: |
+          output="$(printf '5\nTest Customer\nN/A\n1\n1\n0\n1\n6\n0\n' | java -cp out RestaurantManagementSystem)"
+          printf '%s\n' "$output"
+          printf '%s' "$output" | grep -F 'Order No : 1001'
+          printf '%s' "$output" | grep -F 'Date/Time:'
+          printf '%s' "$output" | grep -F 'TOTAL:'
+          printf '%s' "$output" | grep -F 'ORDER HISTORY'
+          printf '%s' "$output" | grep -F 'Payment: Cash'
+          printf '%s' "$output" | grep -F '₹126.00'
