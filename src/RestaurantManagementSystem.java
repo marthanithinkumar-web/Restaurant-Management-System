@@ -90,7 +90,7 @@ public class RestaurantManagementSystem {
             System.out.println("No completed orders in this session yet.");
             return;
         }
-        System.out.println("\\n================ ORDER HISTORY ================");
+        System.out.println("\n================ ORDER HISTORY ================");
         for (Bill bill : completedBills) {
             System.out.printf("Order #%d | %s | Customer: %s | Total: ₹%s | Payment: %s%n",
                     bill.getOrderNumber(), bill.getCreatedAt(), bill.getCustomerName(),
@@ -304,6 +304,8 @@ class Bill {
     public BigDecimal getTotal() { return total; }
     public void print() {
         System.out.println("\n===================== CUSTOMER BILL =====================");
+        System.out.println("Order No : " + orderNumber);
+        System.out.println("Date/Time: " + getCreatedAt());
         System.out.println("Customer: " + order.getCustomer().getName());
         System.out.println("Contact : " + order.getCustomer().getContact());
         System.out.println("---------------------------------------------------------");
