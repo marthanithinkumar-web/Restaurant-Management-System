@@ -21,6 +21,17 @@ javac -d out src/RestaurantManagementSystem.java
 java -cp out RestaurantManagementSystem
 ```
 
+## Run automated regression tests
+
+With JDK 17 (the CI version), compile the application and dependency-free tests, then run the test suite:
+
+```powershell
+javac -encoding UTF-8 -d out src/RestaurantManagementSystem.java tests/RestaurantManagementSystemTest.java
+java -cp out RestaurantManagementSystemTest
+```
+
+GitHub Actions runs these regression tests and a startup/exit smoke test on pushes and pull requests. See [latest workflow runs](https://github.com/marthanithinkumar-web/Restaurant-Management-System/actions).
+
 ## Features
 - Display, add, update, and remove menu items
 - Vegetarian and non-vegetarian item subclasses
