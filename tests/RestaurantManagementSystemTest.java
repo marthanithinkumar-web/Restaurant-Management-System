@@ -11,6 +11,7 @@ public class RestaurantManagementSystemTest {
         testFoodItemValidation();
         testMenuOperations();
         testOrderSubtotal();
+        testOrderItemPriceSnapshot();
         testBillingBelowDiscountThreshold();
         testBillingAtDiscountThreshold();
         testBillingAboveDiscountThreshold();
@@ -46,6 +47,22 @@ public class RestaurantManagementSystemTest {
         order.addItem(new VegItem(2, "Tea", new BigDecimal("20")), 1);
         checkMoney("100.00", order.getSubtotal(), "order subtotal combines quantities and lines");
         checkMoney("80.00", order.getItems().get(0).getLineTotal(), "line total uses quantity");
+    }
+
+    private static void testOrderItemPriceSnapshot() {
+        FoodItem menuItem = new VegItem(1, "Dosa", new BigDecimal("80.00"));
+        Order order = new Order(new Customer("Snapshot Test", "N/A"));
+        order.addItem(menuItem, 2);
+        Bill bill = new Bill(order);
+
+        menuItem.setName("Premium Dosa");
+        menuItem.setPrice(new BigDecimal("125.00"));
+
+        OrderItem line = order.getItems().get(0);
+        check("Dosa".equals(line.getItemName()), "order line preserves item name at order time");
+        checkMoney("80.00", line.getUnitPrice(), "order line preserves unit price at order time");
+        checkMoney("160.00", line.getLineTotal(), "line total remains stable after menu price changes");
+        checkMoney("160.00", bill.getSubtotal(), "bill subtotal remains stable after menu price changes");
     }
 
     private static void testBillingBelowDiscountThreshold() {
