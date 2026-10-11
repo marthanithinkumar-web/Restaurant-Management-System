@@ -37,6 +37,7 @@ GitHub Actions runs these regression tests and a startup/exit smoke test on push
 - Vegetarian and non-vegetarian item subclasses
 - Customer orders with multiple items and quantities
 - Itemized bill with unique order number and date/time
+- Order lines preserve item names and unit prices as they were when added, even if menu prices change later
 - Completed order history for the current application session
 - 10% discount when subtotal is at least ₹500
 - 5% tax calculated after discount
