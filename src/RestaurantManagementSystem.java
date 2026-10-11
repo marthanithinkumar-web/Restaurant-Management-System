@@ -32,8 +32,9 @@ public class RestaurantManagementSystem {
         boolean running = true;
         while (running) {
             System.out.println("\n1. Display menu\n2. Add food item\n3. Update food item price"
-                    + "\n4. Remove food item\n5. Create order and bill\n0. Exit");
-            int choice = readInt("Choose an option: ", 0, 5);
+                    + "\n4. Remove food item\n5. Create order and bill"
+                    + "\n6. View completed order history\n0. Exit");
+            int choice = readInt("Choose an option: ", 0, 6);
             switch (choice) {
                 case 1: restaurant.getMenu().display(); break;
                 case 2: addFoodItem(); break;
