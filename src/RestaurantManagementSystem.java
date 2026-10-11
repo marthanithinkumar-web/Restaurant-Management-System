@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Restaurant Management & Billing System.
@@ -15,6 +17,7 @@ import java.util.Scanner;
 public class RestaurantManagementSystem {
     private final Scanner scanner = new Scanner(System.in);
     private final Restaurant restaurant = new Restaurant("Campus Restaurant");
+    private final List<Bill> completedBills = new ArrayList<>();
 
     public static void main(String[] args) {
         new RestaurantManagementSystem().run();
@@ -37,6 +40,7 @@ public class RestaurantManagementSystem {
                 case 3: updateFoodPrice(); break;
                 case 4: removeFoodItem(); break;
                 case 5: createOrder(); break;
+                case 6: viewOrderHistory(); break;
                 case 0: running = false; System.out.println("Thank you. Goodbye!"); break;
                 default: System.out.println("Invalid choice.");
             }
@@ -80,6 +84,20 @@ public class RestaurantManagementSystem {
         System.out.println(restaurant.getMenu().removeItem(id) ? "Item removed." : "Item not found.");
     }
 
+    private void viewOrderHistory() {
+        if (completedBills.isEmpty()) {
+            System.out.println("No completed orders in this session yet.");
+            return;
+        }
+        System.out.println("\\n================ ORDER HISTORY ================");
+        for (Bill bill : completedBills) {
+            System.out.printf("Order #%d | %s | Customer: %s | Total: ₹%s | Payment: %s%n",
+                    bill.getOrderNumber(), bill.getCreatedAt(), bill.getCustomerName(),
+                    bill.getTotal().toPlainString(), bill.getPaymentMethod());
+        }
+        System.out.println("Note: order history is kept in memory for this session only.");
+    }
+
     private void createOrder() {
         if (restaurant.getMenu().isEmpty()) { System.out.println("Menu is empty."); return; }
         String name = readNonEmpty("Customer name: ");
@@ -109,6 +127,9 @@ public class RestaurantManagementSystem {
         else if (method == 2) payment = new UPIPayment();
         else payment = new CardPayment();
         payment.process(bill.getTotal());
+        bill.setPaymentMethod(payment.getMethodName());
+        completedBills.add(bill);
+        System.out.println("Order #" + bill.getOrderNumber() + " recorded in this session.");
         System.out.println("Note: this is a classroom simulation; no real money was transferred.");
     }
 
@@ -242,10 +263,15 @@ class Order {
     }
 }
 class Bill {
+    private static int nextOrderNumber = 1001;
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     private static final BigDecimal DISCOUNT_THRESHOLD = new BigDecimal("500.00");
     private static final BigDecimal DISCOUNT_RATE = new BigDecimal("0.10");
     private static final BigDecimal TAX_RATE = new BigDecimal("0.05");
     private final Order order;
+    private final int orderNumber;
+    private final LocalDateTime createdAt;
+    private String paymentMethod = "Not recorded";
     private final BigDecimal subtotal;
     private final BigDecimal discount;
     private final BigDecimal tax;
@@ -254,12 +280,22 @@ class Bill {
     public Bill(Order order) {
         if (order == null || order.getItems().isEmpty()) throw new IllegalArgumentException("Cannot bill an empty order.");
         this.order = order;
+        this.orderNumber = nextOrderNumber++;
+        this.createdAt = LocalDateTime.now();
         this.subtotal = order.getSubtotal();
         this.discount = subtotal.compareTo(DISCOUNT_THRESHOLD) >= 0
                 ? subtotal.multiply(DISCOUNT_RATE).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO.setScale(2);
         BigDecimal taxableAmount = subtotal.subtract(discount);
         this.tax = taxableAmount.multiply(TAX_RATE).setScale(2, RoundingMode.HALF_UP);
         this.total = taxableAmount.add(tax).setScale(2, RoundingMode.HALF_UP);
+    }
+    public int getOrderNumber() { return orderNumber; }
+    public String getCreatedAt() { return createdAt.format(DATE_FORMAT); }
+    public String getCustomerName() { return order.getCustomer().getName(); }
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) {
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) throw new IllegalArgumentException("Payment method is required.");
+        this.paymentMethod = paymentMethod;
     }
     public BigDecimal getSubtotal() { return subtotal; }
     public BigDecimal getDiscount() { return discount; }
