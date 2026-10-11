@@ -21,7 +21,8 @@ jobs:
       - name: Compile application
         run: |
           mkdir -p out
-          javac -encoding UTF-8 -d out src/RestaurantManagementSystem.java
+          javac -encoding UTF-8 -d out src/RestaurantManagementSystem.java tests/RestaurantManagementSystemTest.java
+          java -cp out RestaurantManagementSystemTest
       - name: Smoke test application startup and exit
         run: |
           printf '0\n' | java -cp out RestaurantManagementSystem
