@@ -234,17 +234,26 @@ class Customer {
 }
 class OrderItem {
     private final FoodItem foodItem;
+    private final String itemName;
+    private final String category;
+    private final BigDecimal unitPrice;
     private final int quantity;
     public OrderItem(FoodItem foodItem, int quantity) {
         if (foodItem == null) throw new IllegalArgumentException("Food item is required.");
         if (quantity <= 0) throw new IllegalArgumentException("Quantity must be positive.");
         this.foodItem = foodItem;
+        this.itemName = foodItem.getName();
+        this.category = foodItem.getCategory();
+        this.unitPrice = foodItem.getPrice();
         this.quantity = quantity;
     }
     public FoodItem getFoodItem() { return foodItem; }
+    public String getItemName() { return itemName; }
+    public String getCategory() { return category; }
+    public BigDecimal getUnitPrice() { return unitPrice; }
     public int getQuantity() { return quantity; }
     public BigDecimal getLineTotal() {
-        return foodItem.getPrice().multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
+        return unitPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
     }
 }
 class Order {
@@ -311,8 +320,8 @@ class Bill {
         System.out.println("---------------------------------------------------------");
         System.out.printf("%-24s %8s %8s %12s%n", "Item", "Price", "Qty", "Amount");
         for (OrderItem line : order.getItems()) {
-            System.out.printf("%-24s %8s %8d %12s%n", line.getFoodItem().getName(),
-                    line.getFoodItem().getPrice().toPlainString(), line.getQuantity(), line.getLineTotal().toPlainString());
+            System.out.printf("%-24s %8s %8d %12s%n", line.getItemName(),
+                    line.getUnitPrice().toPlainString(), line.getQuantity(), line.getLineTotal().toPlainString());
         }
         System.out.println("---------------------------------------------------------");
         System.out.printf("%-35s ₹%10s%n", "Subtotal:", subtotal.toPlainString());
