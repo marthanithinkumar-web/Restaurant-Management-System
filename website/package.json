@@ -1,0 +1,15 @@
+{
+  "name": "swaruchi-restaurant-web",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:unit": "node --test tests/unit/*.test.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.0.2"
+  }
+}
