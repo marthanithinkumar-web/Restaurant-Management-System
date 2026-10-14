@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS menu_items (
   item_name VARCHAR(100) NOT NULL,
   category ENUM('Vegetarian','Non-vegetarian','Beverage','Dessert') NOT NULL,
   price DECIMAL(10,2) NOT NULL CHECK (price > 0),
-  active BOOLEAN NOT NULL DEFAULT TRUE
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  UNIQUE KEY uq_menu_item_name (item_name)
 );
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -62,4 +63,4 @@ INSERT INTO menu_items (item_name, category, price) VALUES
 ('Chocolate Brownie','Dessert',90.00),
 ('Vanilla Ice Cream','Dessert',70.00),
 ('Gulab Jamun (2 pcs)','Dessert',60.00)
-ON DUPLICATE KEY UPDATE item_name = VALUES(item_name);
+ON DUPLICATE KEY UPDATE category=VALUES(category), price=VALUES(price), active=TRUE;
