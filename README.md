@@ -1,78 +1,95 @@
 # Restaurant Management & Billing System (Java OOP)
 
-A console-based college project built using **standard Java only**. No web framework, JavaScript, database, or external library is required.
+This repository contains the original console-based OOP project and an additional **database-backed Java Swing GUI**. The GUI is a separate entry point so the original console project and its tests remain intact.
 
-## Requirements
-- JDK 8 or later (JDK 11+ recommended)
-- Terminal/Command Prompt or any Java IDE
+## 1. Original console application (no database)
 
-## Run from the repository root
+Requires JDK 8 or later.
 
-### Windows PowerShell / Command Prompt
 ```powershell
 javac -d out src/RestaurantManagementSystem.java
 java -cp out RestaurantManagementSystem
 ```
 
-### macOS / Linux
-```bash
-mkdir -p out
-javac -d out src/RestaurantManagementSystem.java
-java -cp out RestaurantManagementSystem
-```
-
-## Run automated regression tests
-
-With JDK 17 (the CI version), compile the application and dependency-free tests, then run the test suite:
+Run the existing regression tests:
 
 ```powershell
 javac -encoding UTF-8 -d out src/RestaurantManagementSystem.java tests/RestaurantManagementSystemTest.java
 java -cp out RestaurantManagementSystemTest
 ```
 
-GitHub Actions runs these regression tests and a startup/exit smoke test on pushes and pull requests. See [latest workflow runs](https://github.com/marthanithinkumar-web/Restaurant-Management-System/actions).
+## 2. Swing GUI connected to MySQL
 
-## Features
-- Display, add, update, and remove menu items
-- Vegetarian and non-vegetarian item subclasses
-- Customer orders with multiple items and quantities
-- Itemized bill with unique order number and date/time
-- Order lines preserve item names and unit prices as they were when added, even if menu prices change later
-- Completed order history for the current application session
-- 10% discount when subtotal is at least ₹500
-- 5% tax calculated after discount
-- Currency calculations use `BigDecimal`
-- Cash, UPI, and card payment selection (simulation only)
-- Input validation and retry on invalid console input
+### Features
+- Food menu seeded with vegetarian dishes, non-vegetarian dishes, beverages, and desserts.
+- View menu items; add food, update prices, and remove items from the active menu.
+- Create an order, select quantities, calculate subtotal/discount/tax/total, and show a receipt.
+- Save completed orders and individual order lines in MySQL.
+- Load saved order history after restarting the program.
+- Cash, UPI, and card are **classroom simulations only**; no real payment is processed.
+- SQL statements use prepared statements; saving an order and its lines uses a transaction.
 
-## OOP concepts demonstrated
-- **Encapsulation:** private fields and controlled accessors/mutators
-- **Inheritance:** `VegItem` and `NonVegItem` extend `FoodItem`
-- **Abstraction:** abstract `FoodItem` and `Payment` interface
-- **Polymorphism:** payment implementations used through the `Payment` interface
-- **Method overriding:** category and payment behaviour
-- **Collections:** `ArrayList` and `LinkedHashMap`
-- **Composition:** orders contain order lines; restaurant owns a menu
+### Step A — Create the database
+1. Open MySQL Workbench and connect to your local MySQL Server.
+2. Open and execute `database/restaurant_management.sql`.
+3. Confirm the `restaurant_management` schema has `menu_items`, `orders`, and `order_items` tables.
 
-## Billing formula
-1. Subtotal = sum of each item price × quantity.
-2. Discount = 10% of subtotal if subtotal ≥ ₹500; otherwise ₹0.
-3. Tax = 5% × (subtotal − discount).
+The SQL seeds the initial menu. The application also lets you add menu items later.
+
+### Step B — Add MySQL Connector/J
+Download MySQL Connector/J from the official MySQL website and note the path to its JAR file, for example `mysql-connector-j-9.x.x.jar`. Do not commit the connector JAR or your database password to GitHub.
+
+### Step C — Configure database credentials
+The connection defaults are:
+- URL: `jdbc:mysql://localhost:3306/restaurant_management?serverTimezone=Asia/Kolkata`
+- User: `root`
+- Password: empty string
+
+If your MySQL account has a password, set environment variables in PowerShell before launching (replace the example password locally; do not share or commit it):
+
+```powershell
+$env:RESTAURANT_DB_URL = "jdbc:mysql://localhost:3306/restaurant_management?serverTimezone=Asia/Kolkata"
+$env:RESTAURANT_DB_USER = "root"
+$env:RESTAURANT_DB_PASSWORD = "YOUR_LOCAL_MYSQL_PASSWORD"
+```
+
+### Step D — Compile and run the GUI
+Replace the example JAR path with the actual Connector/J path on your computer.
+
+```powershell
+javac -encoding UTF-8 -cp ".;C:\path\to\mysql-connector-j.jar" -d out src/RestaurantDatabase.java src/RestaurantManagementGUI.java
+java -cp "out;C:\path\to\mysql-connector-j.jar" RestaurantManagementGUI
+```
+
+On macOS/Linux, use `:` instead of `; ` in the classpath separator.
+
+### Database tables
+- `menu_items`: active menu and prices.
+- `orders`: customer, timestamp, subtotal, discount, tax, total, and payment method.
+- `order_items`: item name/category/price snapshots and quantities, so older receipts remain accurate when menu prices change or an item is removed.
+
+### Billing formula
+1. Subtotal = sum of item price × quantity.
+2. Discount = 10% when subtotal is at least ₹500; otherwise ₹0.
+3. Tax = 5% of subtotal after discount.
 4. Total = subtotal − discount + tax.
 
-Example for a ₹600 subtotal: discount ₹60.00, taxable amount ₹540.00, tax ₹27.00, final total ₹567.00.
+Example: subtotal ₹600.00, discount ₹60.00, tax ₹27.00, total ₹567.00.
+
+## OOP concepts
+Encapsulation, inheritance (`VegItem` and `NonVegItem` in the console model), abstraction, polymorphism, composition, and collections are demonstrated in the project. The GUI uses separate classes for its Swing presentation and JDBC persistence.
 
 ## Project structure
 ```
-Restaurant-Management-System/
-├── src/
-│   └── RestaurantManagementSystem.java
-├── docs/
-│   ├── ALGORITHM.md
-│   └── CLASS_DIAGRAM.md
-├── README.md
-└── TESTING.md
+src/
+  RestaurantManagementSystem.java       # Existing console version
+  RestaurantManagementGUI.java          # Swing desktop GUI
+  RestaurantDatabase.java               # JDBC database access
+database/
+  restaurant_management.sql             # Schema + initial menu data
+tests/
+  RestaurantManagementSystemTest.java   # Existing console model tests
 ```
 
 ## Important
-Payment choices are simulated; this program does not transfer money. Menu changes and order history are held in memory and are not saved after exit. Order numbers start at 1001 each time the application starts.
+The original console application still keeps menu changes and history in memory. Use `RestaurantManagementGUI` for the new MySQL-backed GUI. Configure credentials for your local server before running it. Payment selection is simulated only.
